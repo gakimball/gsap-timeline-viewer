@@ -1,13 +1,11 @@
 import React, {Component, PropTypes} from 'react';
-import {TimelineLite, TimelineMax} from 'gsap';
+import {TimelineLite} from 'gsap';
 import Label from './label';
+import Timeline from './timeline';
 
 export default class TimelineViewer extends Component {
   static propTypes = {
-    timeline: PropTypes.oneOfType([
-      PropTypes.instanceOf(TimelineLite),
-      PropTypes.instanceOf(TimelineMax)
-    ]).isRequired
+    timeline: PropTypes.instanceOf(TimelineLite).isRequired
   }
 
   static formatTime(time) {
@@ -25,6 +23,7 @@ export default class TimelineViewer extends Component {
     };
 
     if (props.timeline) {
+      console.log(props.timeline);
       this.setupTimeline(true);
     }
   }
@@ -117,6 +116,7 @@ export default class TimelineViewer extends Component {
 
   render() {
     const {formatTime} = this.constructor;
+    const {timeline} = this.props;
     const {currentTime, duration, playing, labels} = this.state;
 
     return (
@@ -125,6 +125,7 @@ export default class TimelineViewer extends Component {
           {playing ? 'Pause' : 'Play'}
         </button>
         <div className="timeline">
+          <Timeline timeline={timeline}/>
           <input
             className="slider"
             type="range"
@@ -157,6 +158,8 @@ export default class TimelineViewer extends Component {
           .timeline {
             position: relative;
             flex: 1 1 0px;
+            display: flex;
+            flex-flow: column nowrap;
           }
 
           .play-button {
