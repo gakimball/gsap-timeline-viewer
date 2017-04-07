@@ -49,9 +49,13 @@
   "xo": {
     "extends": "xo-react",
     "parser": "babel-eslint",
-    "space": true
+    "space": true,
+    "rules": {
+      "no-unused-expressions": 0
+    }
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "styled-jsx": "^0.5.7"
   }
 }
