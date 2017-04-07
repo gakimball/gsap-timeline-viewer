@@ -16,19 +16,7 @@ export default class TimelineViewer extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      playing: false,
-      reversed: false,
-      currentTime: 0,
-      duration: 1,
-      labels: [],
-      timeScale: 1
-    };
-
-    if (props.timeline) {
-      console.log(props.timeline);
-      this.setupTimeline(true);
-    }
+    this.setupTimeline(true);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -47,7 +35,8 @@ export default class TimelineViewer extends Component {
       currentTime: timeline.totalTime(),
       duration: timeline.totalDuration(),
       labels: timeline.getLabelsArray(),
-      timeScale: String(timeline.timeScale())
+      timeScale: String(timeline.timeScale()),
+      timeScaleVisible: false
     };
 
     if (initial) {
@@ -132,6 +121,12 @@ export default class TimelineViewer extends Component {
     });
   }
 
+  handleTimeScaleButton = () => {
+    this.setState({
+      timeScaleVisible: !this.state.timeScaleVisible
+    });
+  }
+
   handleTimeScaleChange = value => {
     this.props.timeline.timeScale(value);
     this.setState({
@@ -142,7 +137,7 @@ export default class TimelineViewer extends Component {
   render() {
     const {formatTime} = this.constructor;
     const {timeline} = this.props;
-    const {currentTime, duration, playing, labels, reversed, timeScale} = this.state;
+    const {currentTime, duration, playing, labels, reversed, timeScale, timeScaleVisible} = this.state;
 
     return (
       <div className="container">
@@ -179,14 +174,14 @@ export default class TimelineViewer extends Component {
               {formatTime(currentTime)} / {formatTime(duration)}
             </div>
             <div>
-              <button type="button">Time Scale: {timeScale}</button>
+              <button type="button" onClick={this.handleTimeScaleButton}>Time Scale: {timeScale}</button>
             </div>
           </div>
         </div>
 
-        <div className="strip">
+        {timeScaleVisible && <div className="strip">
           <TimeScale value={timeScale} onChange={this.handleTimeScaleChange}/>
-        </div>
+        </div>}
 
         <style jsx>{`
           .container {
