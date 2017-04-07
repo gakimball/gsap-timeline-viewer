@@ -26,6 +26,7 @@ class App extends Component {
         .staggerTo('.letter', 0.25, {y: 0}, 0.1, 0.5)
         .addLabel('bye')
         .set('.word', {color: '#000'})
+        .addPause()
         .fromTo('.word', 1, {opacity: 1}, {opacity: 0})
     });
   }

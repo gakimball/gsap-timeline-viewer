@@ -16,53 +16,49 @@ export default class TimelineViewer extends Component {
   constructor(props) {
     super(props);
 
-    this.setupTimeline(true);
+    this.setTimelineState(true);
   }
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.timeline && nextProps.timeline) {
-      this.setupTimeline();
+      this.setTimelineState();
     }
   }
 
-  setupTimeline(initial = false) {
+  setTimelineState = (initial = false) => {
     const {timeline} = this.props;
-    timeline.eventCallback('onUpdate', this.updateSlider);
 
-    const nextState = {
+    const sliderState = {
       playing: !timeline.paused(),
-      reversed: this.props.timeline.reversed(),
+      reversed: timeline.reversed(),
       currentTime: timeline.totalTime(),
       duration: timeline.totalDuration(),
       labels: timeline.getLabelsArray(),
-      timeScale: String(timeline.timeScale()),
-      timeScaleVisible: false
+      timeScale: String(timeline.timeScale())
     };
 
     if (initial) {
-      this.state = {...nextState};
+      const coreState = {
+        timeScaleVisible: false
+      };
+      timeline.eventCallback('onUpdate', this.setTimelineState);
+      this.state = {...sliderState, ...coreState};
     } else {
-      this.setState(nextState);
+      this.setState(sliderState);
     }
-  }
-
-  play() {
-    this.props.timeline.play();
-    this.updateButtons();
-  }
-
-  pause() {
-    this.props.timeline.pause();
-    this.updateButtons();
   }
 
   handlePlayButtonClick = () => {
     const {timeline} = this.props;
 
     if (timeline.paused()) {
-      this.play();
+      if (timeline.reversed()) {
+        timeline.reverse();
+      } else {
+        timeline.play();
+      }
     } else {
-      this.pause();
+      timeline.pause();
     }
   }
 
@@ -74,8 +70,6 @@ export default class TimelineViewer extends Component {
     } else {
       timeline.reverse();
     }
-
-    this.updateButtons();
   }
 
   handleSliderClick = () => {
@@ -85,40 +79,22 @@ export default class TimelineViewer extends Component {
       this.wasPaused = true;
     } else {
       this.wasPaused = false;
-      this.pause();
+      timeline.pause();
     }
   }
 
   handleSliderChange = event => {
     this.props.timeline.totalTime(event.target.value);
-    this.updateSlider();
   }
 
   handleSliderRelease = () => {
     if (this.wasPaused === false) {
-      this.play();
+      this.props.timeline.play();
     }
   }
 
   handleLabelClick = name => {
     this.props.timeline.seek(name);
-
-    if (this.props.timeline.paused()) {
-      this.updateSlider();
-    }
-  }
-
-  updateButtons() {
-    this.setState({
-      playing: !this.props.timeline.paused(),
-      reversed: this.props.timeline.reversed()
-    });
-  }
-
-  updateSlider = () => {
-    this.setState({
-      currentTime: this.props.timeline.totalTime()
-    });
   }
 
   handleTimeScaleButton = () => {

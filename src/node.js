@@ -14,12 +14,13 @@ const Node = ({item, timeline}) => {
     right: getPercentage(timeline.totalDuration() - item.endTime(), timeline.totalDuration())
   };
   const isInstant = item.duration() === 0;
-  const isFunction = typeof item.target === 'function';
   const nodeType = do {
     if (item instanceof TimelineLite) {
       'timeline';
     } else if (isInstant) {
-      if (isFunction) {
+      if (item.data === 'isPause') {
+        'pause';
+      } else if (typeof item.target === 'function') {
         'function';
       } else {
         'set';
@@ -29,12 +30,8 @@ const Node = ({item, timeline}) => {
     }
   };
 
-  const className = cls('node', {
-    'node--instant': isInstant,
-    'node--timeline': nodeType === 'timeline',
-    'node--set': nodeType === 'set',
-    'node--function': nodeType === 'function',
-    'node--tween': nodeType === 'tween'
+  const className = cls('node', `node--${nodeType}`, {
+    'node--instant': isInstant
   });
 
   return (
@@ -53,6 +50,8 @@ const Node = ({item, timeline}) => {
             return 'F';
           case 'set':
             return 'S';
+          case 'pause':
+            return 'P';
           default:
         }
       })()}
@@ -66,7 +65,7 @@ const Node = ({item, timeline}) => {
           text-align: center;
           text-transform: uppercase;
           font-weight: bold;
-          color: rgba(0, 0, 0, 0.5);
+          color: #fff;
         }
 
         .node--instant {
@@ -79,19 +78,23 @@ const Node = ({item, timeline}) => {
         }
 
         .node--tween {
-          background: #afeef0
+          background: #34c1f6
         }
 
         .node--timeline {
-          background: #d5a6b7
+          background: #00e1ac
         }
 
         .node--function {
-          background: #a7f1ba;
+          background: #ad7bff;
         }
 
         .node--set {
-          background: #97ddd6;
+          background: #fc9900;
+        }
+
+        .node--pause {
+          background: #ff504a;
         }
       `}</style>
     </div>

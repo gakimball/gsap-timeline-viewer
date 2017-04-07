@@ -69,6 +69,8 @@ export default class Timeline extends Component {
   constructor(props) {
     super(props);
 
+    console.log(props.timeline.getChildren(false));
+
     this.state = {
       rows: this.constructor.organizeTimeline(props.timeline),
       nestedTimelines: this.constructor.getNestedTimelines(props.timeline)
