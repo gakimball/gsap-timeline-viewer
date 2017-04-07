@@ -3,7 +3,12 @@ import {TimelineLite} from 'gsap';
 
 export default class Timeline extends Component {
   static propTypes = {
+    collapsed: PropTypes.bool,
     timeline: PropTypes.instanceOf(TimelineLite).isRequired
+  }
+
+  static defaultProps = {
+    collapsed: false
   }
 
   static organizeTimeline(timeline) {
@@ -56,11 +61,16 @@ export default class Timeline extends Component {
     return rows;
   }
 
+  static getNestedTimelines(timeline) {
+    return timeline.getChildren(false, false).map(() => false);
+  }
+
   constructor(props) {
     super(props);
 
     this.state = {
-      rows: this.constructor.organizeTimeline(props.timeline)
+      rows: this.constructor.organizeTimeline(props.timeline),
+      nestedTimelines: this.constructor.getNestedTimelines(props.timeline)
     };
   }
 
@@ -70,9 +80,20 @@ export default class Timeline extends Component {
     return `${(start / end).toFixed(2) * 100}%`;
   }
 
+  showTimeline(index) {
+    const nestedTimelines = [...this.state.nestedTimelines];
+    nestedTimelines[index] = true;
+
+    this.setState({nestedTimelines});
+  }
+
   render() {
-    const {timeline} = this.props;
+    const {collapsed, timeline} = this.props;
     const {rows} = this.state;
+
+    if (collapsed) {
+      return <div/>;
+    }
 
     return (
       <div className="timeline">
@@ -84,19 +105,31 @@ export default class Timeline extends Component {
                 right: this.getPercentage(timeline.totalDuration() - item.endTime())
               };
 
+              // Render timelines
               if (item instanceof TimelineLite) {
-                // Render timelines
                 return (
-                  <div className="node node--timeline" style={style} key={index} >
+                  <div className="node node--timeline" style={style} key={index}>
+                    {/* <Timeline timeline={item}/> */}
                     Timeline
                   </div>
                 );
               }
 
+              // Render items with no duration (callbacks, sets)
+              if (item.startTime() === item.endTime()) {
+                const type = typeof item.target === 'function' ? 'function' : 'set';
+                return (
+                  <div className={`node node--instant node--${type}`} style={style} key={index}>
+                    {type === 'function' ? 'F' : 'S'}
+                  </div>
+                );
+              }
+
               // Render tweens
+              const props = Array.isArray(item._propLookup) ? item._propLookup : [];
               return (
                 <div className="node node--tween" style={style} key={index}>
-                  {item._propLookup.reduce((arr, item) =>
+                  {props.reduce((arr, item) =>
                     arr.concat(Object.keys(item))
                   , []).join(', ')}
                 </div>
@@ -110,12 +143,28 @@ export default class Timeline extends Component {
             position: relative;
             width: 100%;
             height: 20px;
+            margin-bottom: 2px;
           }
 
           .node {
             position: absolute;
             top: 0;
             bottom: 0;
+            font-size: 11px;
+            line-height: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.5);
+          }
+
+          .node--instant {
+            right: auto !important;
+            width: 20px;
+            height: 20px;
+            margin-left: -10px;
+            border-radius: 50%;
+            text-align: center;
           }
 
           .node--tween {
@@ -124,6 +173,14 @@ export default class Timeline extends Component {
 
           .node--timeline {
             background: #d5a6b7
+          }
+
+          .node--function {
+            background: #a7f1ba;
+          }
+
+          .node--set {
+            background: #97ddd6;
           }
         `}</style>
       </div>

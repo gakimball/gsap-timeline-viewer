@@ -17,6 +17,7 @@ export default class TimelineViewer extends Component {
 
     this.state = {
       playing: false,
+      reversed: false,
       currentTime: 0,
       duration: 1,
       labels: []
@@ -40,6 +41,7 @@ export default class TimelineViewer extends Component {
 
     const nextState = {
       playing: !timeline.paused(),
+      reversed: this.props.timeline.reversed(),
       currentTime: timeline.totalTime(),
       duration: timeline.totalDuration(),
       labels: timeline.getLabelsArray()
@@ -54,12 +56,12 @@ export default class TimelineViewer extends Component {
 
   play() {
     this.props.timeline.play();
-    this.updateButton();
+    this.updateButtons();
   }
 
   pause() {
     this.props.timeline.pause();
-    this.updateButton();
+    this.updateButtons();
   }
 
   handlePlayButtonClick = () => {
@@ -70,6 +72,18 @@ export default class TimelineViewer extends Component {
     } else {
       this.pause();
     }
+  }
+
+  handleReverseButtonClick = () => {
+    const {timeline} = this.props;
+
+    if (timeline.reversed()) {
+      timeline.play();
+    } else {
+      timeline.reverse();
+    }
+
+    this.updateButtons();
   }
 
   handleSliderClick = () => {
@@ -102,9 +116,10 @@ export default class TimelineViewer extends Component {
     }
   }
 
-  updateButton() {
+  updateButtons() {
     this.setState({
-      playing: !this.props.timeline.paused()
+      playing: !this.props.timeline.paused(),
+      reversed: this.props.timeline.reversed()
     });
   }
 
@@ -117,13 +132,18 @@ export default class TimelineViewer extends Component {
   render() {
     const {formatTime} = this.constructor;
     const {timeline} = this.props;
-    const {currentTime, duration, playing, labels} = this.state;
+    const {currentTime, duration, playing, labels, reversed} = this.state;
 
     return (
       <div className="container">
-        <button className="play-button" onClick={this.handlePlayButtonClick}>
-          {playing ? 'Pause' : 'Play'}
-        </button>
+        <div className="controls">
+          <button className="button" onClick={this.handlePlayButtonClick}>
+            {playing ? 'Pause' : 'Play'}
+          </button>
+          <button className="button" onClick={this.handleReverseButtonClick}>
+            {reversed ? 'Unreverse' : 'Reverse'}
+          </button>
+        </div>
         <div className="timeline">
           <Timeline timeline={timeline}/>
           <input
@@ -151,6 +171,7 @@ export default class TimelineViewer extends Component {
           .container {
             display: flex;
             flex-flow: row nowrap;
+            align-items: center;
             padding: 16px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
           }
@@ -162,8 +183,12 @@ export default class TimelineViewer extends Component {
             flex-flow: column nowrap;
           }
 
-          .play-button {
-            flex: 0 0 auto;
+          .controls {
+            flex: 0 0 10%;
+            display: flex;
+            flex-flow: column nowrap;
+            align-items: center;
+            justify-content: space-between;
             margin-right: 10px;
           }
 

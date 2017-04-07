@@ -18,11 +18,14 @@ class App extends Component {
       timeline: new TimelineMax()
         .addLabel('whoosh')
         .fromTo('.word', 1, {scale: 0}, {scale: 1})
+        .set('.word', {color: '#834071'})
+        .add(() => console.log('Hello!'))
         .addLabel('stagger')
         .staggerTo('.letter', 0.25, {y: -10}, 0.1)
         .staggerTo('.letter', 0.25, {y: 10}, 0.1, 0.25)
         .staggerTo('.letter', 0.25, {y: 0}, 0.1, 0.5)
         .addLabel('bye')
+        .set('.word', {color: '#000'})
         .fromTo('.word', 1, {opacity: 1}, {opacity: 0})
         .timeScale(1 / 3)
     });
@@ -41,6 +44,33 @@ class App extends Component {
         <div className="viewer">
           {timeline && <TimelineViewer timeline={timeline}/>}
         </div>
+
+        <style jsx global>{`
+          html {
+            font-family: 'Source Sans Pro';
+          }
+        `}</style>
+
+        <style jsx>{`
+          .word {
+            font-size: 64px;
+            font-weight: 900;
+            text-align: center;
+            line-height: 100vh;
+          }
+
+          .letter {
+            position: relative;
+            display: inline-block;
+          }
+
+          .viewer {
+            position: fixed;
+            bottom: 10px;
+            left: 12.5%;
+            width: 75vw;
+          }
+        `}</style>
       </div>
     );
   }
