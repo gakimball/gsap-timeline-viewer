@@ -8,6 +8,22 @@ const getPercentage = (time, total) => {
   return `${(start / end).toFixed(2) * 100}%`;
 };
 
+const propLookup = item => {
+  const properties = Array.isArray(item._propLookup) ? item._propLookup : [];
+
+  if (Array.isArray(item._propLookup)) {
+    return properties.reduce((arr, item) =>
+      arr.concat(Object.keys(item))
+    , []).join(', ');
+  }
+
+  if (typeof item._propLookup === 'object') {
+    return Object.keys(item._propLookup).join(', ');
+  }
+
+  return '';
+}
+
 const Node = ({item, timeline}) => {
   const style = {
     left: getPercentage(item.startTime(), timeline.totalDuration()),
@@ -38,12 +54,8 @@ const Node = ({item, timeline}) => {
     <div className={className} style={style}>
       {(() => {
         switch (nodeType) {
-          case 'tween': {
-            const properties = Array.isArray(item._propLookup) ? item._propLookup : [];
-            return properties.reduce((arr, item) =>
-              arr.concat(Object.keys(item))
-            , []).join(', ');
-          }
+          case 'tween':
+            return propLookup(item);
           case 'timeline':
             return 'Timeline';
           case 'function':

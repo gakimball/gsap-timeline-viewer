@@ -5,31 +5,35 @@ import organizeTimeline from '../util/organize-timeline';
 
 export default class Timeline extends Component {
   static propTypes = {
-    collapsed: PropTypes.bool,
+    expand: PropTypes.bool,
     timeline: PropTypes.instanceOf(TimelineLite).isRequired
   }
 
   static defaultProps = {
-    collapsed: false
+    expand: false
   }
 
   constructor(props) {
     super(props);
 
-    console.log(props.timeline.getChildren(false));
+    console.log(props.timeline.getChildren(true));
 
     this.state = {
-      rows: organizeTimeline(props.timeline)
+      rows: organizeTimeline(props.timeline.getChildren(props.expand))
     };
   }
 
-  render() {
-    const {collapsed, timeline} = this.props;
-    const {rows} = this.state;
-
-    if (collapsed) {
-      return <div/>;
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.expand !== this.props.expand) {
+      this.setState({
+        rows: organizeTimeline(nextProps.timeline.getChildren(nextProps.expand))
+      });
     }
+  }
+
+  render() {
+    const {timeline, expand} = this.props;
+    const {rows} = this.state;
 
     return (
       <div className="timeline">

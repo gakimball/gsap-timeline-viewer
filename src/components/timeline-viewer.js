@@ -39,7 +39,9 @@ export default class TimelineViewer extends Component {
 
     if (initial) {
       const coreState = {
-        timeScaleVisible: false
+        timeScaleVisible: false,
+        optionsVisible: false,
+        expandTimelines: false
       };
       timeline.eventCallback('onUpdate', this.setTimelineState);
       this.state = {...sliderState, ...coreState};
@@ -111,10 +113,22 @@ export default class TimelineViewer extends Component {
     });
   }
 
+  handleOptionsButton = () => {
+    this.setState({
+      optionsVisible: !this.state.optionsVisible
+    });
+  }
+
+  handleExpandTimelineOption = event => {
+    this.setState({
+      expandTimelines: event.target.checked
+    });
+  }
+
   render() {
     const {formatTime} = this.constructor;
     const {timeline} = this.props;
-    const {currentTime, duration, playing, labels, reversed, timeScale, timeScaleVisible} = this.state;
+    const {currentTime, duration, playing, labels, reversed, timeScale, timeScaleVisible, optionsVisible, expandTimelines} = this.state;
 
     return (
       <div className="container">
@@ -128,7 +142,7 @@ export default class TimelineViewer extends Component {
             </button>
           </div>
           <div className="timeline">
-            <Timeline timeline={timeline}/>
+            <Timeline timeline={timeline} expand={expandTimelines}/>
             <input
               className="slider"
               type="range"
@@ -153,11 +167,21 @@ export default class TimelineViewer extends Component {
             <div>
               <button type="button" onClick={this.handleTimeScaleButton}>Time Scale: {timeScale}</button>
             </div>
+            <div>
+              <button type="button" onClick={this.handleOptionsButton}>Options</button>
+            </div>
           </div>
         </div>
 
         {timeScaleVisible && <div className="strip">
           <TimeScale value={timeScale} onChange={this.handleTimeScaleChange}/>
+        </div>}
+
+        {optionsVisible && <div className="strip">
+          <label>
+            <input type="checkbox" value={expandTimelines} onChange={this.handleExpandTimelineOption}/>
+            Expand Timelines
+          </label>
         </div>}
 
         <style jsx>{`

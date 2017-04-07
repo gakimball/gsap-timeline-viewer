@@ -1,5 +1,4 @@
-export default timeline => {
-  const items = timeline.getChildren(false);
+export default items => {
   const rows = [];
   const freeRow = item => {
     for (let i = 0; i < rows.length; i++) {
