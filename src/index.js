@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {TimelineLite} from 'gsap';
 import Label from './label';
 import Timeline from './timeline';
+import TimeScale from './time-scale';
 
 export default class TimelineViewer extends Component {
   static propTypes = {
@@ -20,7 +21,8 @@ export default class TimelineViewer extends Component {
       reversed: false,
       currentTime: 0,
       duration: 1,
-      labels: []
+      labels: [],
+      timeScale: 1
     };
 
     if (props.timeline) {
@@ -44,7 +46,8 @@ export default class TimelineViewer extends Component {
       reversed: this.props.timeline.reversed(),
       currentTime: timeline.totalTime(),
       duration: timeline.totalDuration(),
-      labels: timeline.getLabelsArray()
+      labels: timeline.getLabelsArray(),
+      timeScale: String(timeline.timeScale())
     };
 
     if (initial) {
@@ -129,46 +132,64 @@ export default class TimelineViewer extends Component {
     });
   }
 
+  handleTimeScaleChange = value => {
+    this.props.timeline.timeScale(value);
+    this.setState({
+      timeScale: String(value)
+    });
+  }
+
   render() {
     const {formatTime} = this.constructor;
     const {timeline} = this.props;
-    const {currentTime, duration, playing, labels, reversed} = this.state;
+    const {currentTime, duration, playing, labels, reversed, timeScale} = this.state;
 
     return (
-      <div className="container">
-        <div className="controls">
-          <button className="button" onClick={this.handlePlayButtonClick}>
-            {playing ? 'Pause' : 'Play'}
-          </button>
-          <button className="button" onClick={this.handleReverseButtonClick}>
-            {reversed ? 'Unreverse' : 'Reverse'}
-          </button>
-        </div>
-        <div className="timeline">
-          <Timeline timeline={timeline}/>
-          <input
-            className="slider"
-            type="range"
-            value={currentTime}
-            min="0"
-            max={duration}
-            step="0.1"
-            onMouseDown={this.handleSliderClick}
-            onChange={this.handleSliderChange}
-            onMouseUp={this.handleSliderRelease}
-            />
-          <div className="labels">
-            {labels.map(({name, time}) =>
-              <Label key={name} name={name} time={time} duration={duration} onClick={this.handleLabelClick}/>
-            )}
+      <div>
+        <div className="strip">
+          <div className="controls">
+            <button className="button" onClick={this.handlePlayButtonClick}>
+              {playing ? 'Pause' : 'Play'}
+            </button>
+            <button className="button" onClick={this.handleReverseButtonClick}>
+              {reversed ? 'Unreverse' : 'Reverse'}
+            </button>
+          </div>
+          <div className="timeline">
+            <Timeline timeline={timeline}/>
+            <input
+              className="slider"
+              type="range"
+              value={currentTime}
+              min="0"
+              max={duration}
+              step="0.1"
+              onMouseDown={this.handleSliderClick}
+              onChange={this.handleSliderChange}
+              onMouseUp={this.handleSliderRelease}
+              />
+            <div className="labels">
+              {labels.map(({name, time}) =>
+                <Label key={name} name={name} time={time} duration={duration} onClick={this.handleLabelClick}/>
+              )}
+            </div>
+          </div>
+          <div className="time">
+            <div>
+              {formatTime(currentTime)} / {formatTime(duration)}
+            </div>
+            <div>
+              <button type="button">Time Scale: {timeScale}</button>
+            </div>
           </div>
         </div>
-        <div className="time">
-          {formatTime(currentTime)} / {formatTime(duration)}
+
+        <div className="strip">
+          <TimeScale value={timeScale} onChange={this.handleTimeScaleChange}/>
         </div>
 
         <style jsx>{`
-          .container {
+          .strip {
             display: flex;
             flex-flow: row nowrap;
             align-items: center;

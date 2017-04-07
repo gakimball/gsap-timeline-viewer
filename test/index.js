@@ -27,7 +27,6 @@ class App extends Component {
         .addLabel('bye')
         .set('.word', {color: '#000'})
         .fromTo('.word', 1, {opacity: 1}, {opacity: 0})
-        .timeScale(1 / 3)
     });
   }
 

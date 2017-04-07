@@ -13,7 +13,7 @@ const Node = ({item, timeline}) => {
     left: getPercentage(item.startTime(), timeline.totalDuration()),
     right: getPercentage(timeline.totalDuration() - item.endTime(), timeline.totalDuration())
   };
-  const isInstant = item.startTime() === item.endTime();
+  const isInstant = item.duration() === 0;
   const isFunction = typeof item.target === 'function';
   const nodeType = do {
     if (item instanceof TimelineLite) {
