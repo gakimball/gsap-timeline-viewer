@@ -145,7 +145,7 @@ export default class TimelineViewer extends Component {
     const {currentTime, duration, playing, labels, reversed, timeScale} = this.state;
 
     return (
-      <div>
+      <div className="container">
         <div className="strip">
           <div className="controls">
             <button className="button" onClick={this.handlePlayButtonClick}>
@@ -189,12 +189,19 @@ export default class TimelineViewer extends Component {
         </div>
 
         <style jsx>{`
+          .container {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+          }
+
           .strip {
             display: flex;
             flex-flow: row nowrap;
             align-items: center;
             padding: 16px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+          }
+
+          .strip:not(:first-child) {
+            border-top: 1px solid #ddd;
           }
 
           .timeline {
