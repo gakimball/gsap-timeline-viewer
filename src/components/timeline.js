@@ -13,26 +13,14 @@ export default class Timeline extends Component {
     collapsed: false
   }
 
-  static getNestedTimelines(timeline) {
-    return timeline.getChildren(false, false).map(() => false);
-  }
-
   constructor(props) {
     super(props);
 
     console.log(props.timeline.getChildren(false));
 
     this.state = {
-      rows: organizeTimeline(props.timeline),
-      nestedTimelines: this.constructor.getNestedTimelines(props.timeline)
+      rows: organizeTimeline(props.timeline)
     };
-  }
-
-  showTimeline(index) {
-    const nestedTimelines = [...this.state.nestedTimelines];
-    nestedTimelines[index] = true;
-
-    this.setState({nestedTimelines});
   }
 
   render() {
