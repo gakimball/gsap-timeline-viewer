@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {TimelineLite} from 'gsap';
+import Node from './node';
 
 export default class Timeline extends Component {
   static propTypes = {
@@ -74,12 +75,6 @@ export default class Timeline extends Component {
     };
   }
 
-  getPercentage(time) {
-    const start = parseFloat(time);
-    const end = parseFloat(this.props.timeline.totalDuration());
-    return `${(start / end).toFixed(2) * 100}%`;
-  }
-
   showTimeline(index) {
     const nestedTimelines = [...this.state.nestedTimelines];
     nestedTimelines[index] = true;
@@ -99,42 +94,7 @@ export default class Timeline extends Component {
       <div className="timeline">
         {rows.map(row =>
           <div className="row" key={row.line}>
-            {row.items.map((item, index) => {
-              const style = {
-                left: this.getPercentage(item.startTime()),
-                right: this.getPercentage(timeline.totalDuration() - item.endTime())
-              };
-
-              // Render timelines
-              if (item instanceof TimelineLite) {
-                return (
-                  <div className="node node--timeline" style={style} key={index}>
-                    {/* <Timeline timeline={item}/> */}
-                    Timeline
-                  </div>
-                );
-              }
-
-              // Render items with no duration (callbacks, sets)
-              if (item.startTime() === item.endTime()) {
-                const type = typeof item.target === 'function' ? 'function' : 'set';
-                return (
-                  <div className={`node node--instant node--${type}`} style={style} key={index}>
-                    {type === 'function' ? 'F' : 'S'}
-                  </div>
-                );
-              }
-
-              // Render tweens
-              const props = Array.isArray(item._propLookup) ? item._propLookup : [];
-              return (
-                <div className="node node--tween" style={style} key={index}>
-                  {props.reduce((arr, item) =>
-                    arr.concat(Object.keys(item))
-                  , []).join(', ')}
-                </div>
-              );
-            })}
+            {row.items.map((item, index) => <Node item={item} timeline={timeline} key={index}/>)}
           </div>
         )}
 
@@ -144,43 +104,6 @@ export default class Timeline extends Component {
             width: 100%;
             height: 20px;
             margin-bottom: 2px;
-          }
-
-          .node {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            font-size: 11px;
-            line-height: 20px;
-            text-align: center;
-            text-transform: uppercase;
-            font-weight: bold;
-            color: rgba(0, 0, 0, 0.5);
-          }
-
-          .node--instant {
-            right: auto !important;
-            width: 20px;
-            height: 20px;
-            margin-left: -10px;
-            border-radius: 50%;
-            text-align: center;
-          }
-
-          .node--tween {
-            background: #afeef0
-          }
-
-          .node--timeline {
-            background: #d5a6b7
-          }
-
-          .node--function {
-            background: #a7f1ba;
-          }
-
-          .node--set {
-            background: #97ddd6;
           }
         `}</style>
       </div>
