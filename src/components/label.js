@@ -32,19 +32,22 @@ export default class Label extends Component {
             position: absolute;
             bottom: 0;
             background: #3d7fd5;
-            padding: 2px 5px;
+            padding: 0 7px;
             cursor: pointer;
             font-size: 11px;
             text-transform: uppercase;
             font-weight: bold;
             color: #fff;
+            height: 18px;
+            line-height: 18px;
+            margin-bottom: 9px;
           }
 
           .label::before {
             content: '';
             display: block;
             width: 2px;
-            height: 150%;
+            height: 27px;
             position: absolute;
             top: 0;
             left: -1px;
