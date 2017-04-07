@@ -59,6 +59,7 @@ export default class TimelineViewer extends Component {
       }
     } else {
       timeline.pause();
+      this.setTimelineState();
     }
   }
 
