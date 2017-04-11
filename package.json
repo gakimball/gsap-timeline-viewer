@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gakimball/timeline-viewer.git"
+    "url": "git+https://github.com/ueno-llc/timeline-viewer.git"
   },
   "keywords": [
     "timeline-viewer"
@@ -17,9 +17,9 @@
   "author": "Geoff Kimball <geoff@geoffkimball.com> (http://geoffkimball.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gakimball/timeline-viewer/issues"
+    "url": "https://github.com/ueno-llc/timeline-viewer/issues"
   },
-  "homepage": "https://github.com/gakimball/timeline-viewer#readme",
+  "homepage": "https://github.com/ueno-llc/timeline-viewer#readme",
   "devDependencies": {
     "babel-core": "^6.24.0",
     "babel-eslint": "^7.2.1",

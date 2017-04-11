@@ -2,7 +2,7 @@
 
 > Interactive GSAP timeline viewer
 
-[![Travis](https://img.shields.io/travis/gakimball/timeline-viewer.svg?maxAge=2592000)](https://travis-ci.org/gakimball/timeline-viewer) [![npm](https://img.shields.io/npm/v/timeline-viewer.svg?maxAge=2592000)](https://www.npmjs.com/package/timeline-viewer)
+[![Travis](https://img.shields.io/travis/ueno-llc/timeline-viewer.svg?maxAge=2592000)](https://travis-ci.org/ueno-llc/timeline-viewer) [![npm](https://img.shields.io/npm/v/timeline-viewer.svg?maxAge=2592000)](https://www.npmjs.com/package/timeline-viewer)
 
 ## Installation
 
@@ -17,7 +17,7 @@ npm install timeline-viewer
 ## Local Development
 
 ```bash
-git clone https://github.com/gakimball/timeline-viewer
+git clone https://github.com/ueno-llc/timeline-viewer
 cd timeline-viewer
 npm install
 npm test
