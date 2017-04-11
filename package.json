@@ -4,7 +4,9 @@
   "description": "Interactive GSAP timeline viewer",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --watch --config webpack.config.test.js & lite-server --baseDir=\"test\"",
+    "demo:compile": "webpack --watch --config webpack.config.demo.js",
+    "demo:server": "lite-server --baseDir=\"demo\"",
+    "dev": "npm run demo:compile & npm run demo:server",
     "test": "xo && mocha"
   },
   "repository": {
