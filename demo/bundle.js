@@ -17855,12 +17855,12 @@ var Node = function (_Component) {
   }, {
     key: 'isInstant',
     get: function get() {
-      return this.props.item.duration() === 0;
+      return this.props.item.item.duration() === 0;
     }
   }, {
     key: 'nodeType',
     get: function get() {
-      var item = this.props.item;
+      var item = this.props.item.item;
 
 
       if (item instanceof _gsap.TimelineLite) {
@@ -17889,8 +17889,8 @@ var Node = function (_Component) {
 
 
       return {
-        left: getPercentage(item.startTime(), timeline.totalDuration()),
-        right: getPercentage(timeline.totalDuration() - item.endTime(), timeline.totalDuration())
+        left: getPercentage(item.startTime, timeline.totalDuration()),
+        right: getPercentage(timeline.totalDuration() - item.endTime, timeline.totalDuration())
       };
     }
   }], [{
@@ -17902,7 +17902,9 @@ var Node = function (_Component) {
     }
   }, {
     key: 'propLookup',
-    value: function propLookup(item) {
+    value: function propLookup(_ref) {
+      var item = _ref.item;
+
       var properties = Array.isArray(item._propLookup) ? item._propLookup : [];
 
       if (Array.isArray(item._propLookup)) {
@@ -18376,13 +18378,13 @@ var _react2 = _interopRequireDefault(_react);
 
 var _gsap = __webpack_require__(27);
 
-var _node = __webpack_require__(98);
-
-var _node2 = _interopRequireDefault(_node);
-
 var _organizeTimeline = __webpack_require__(102);
 
 var _organizeTimeline2 = _interopRequireDefault(_organizeTimeline);
+
+var _node = __webpack_require__(98);
+
+var _node2 = _interopRequireDefault(_node);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -18403,7 +18405,7 @@ var Timeline = function (_Component) {
     console.log(props.timeline.getChildren(true));
 
     _this.state = {
-      rows: (0, _organizeTimeline2.default)(props.timeline.getChildren(props.expand))
+      rows: (0, _organizeTimeline2.default)(props.timeline.getChildren(props.expand, true, !props.expand))
     };
     return _this;
   }
@@ -18413,16 +18415,14 @@ var Timeline = function (_Component) {
     value: function componentWillReceiveProps(nextProps) {
       if (nextProps.expand !== this.props.expand) {
         this.setState({
-          rows: (0, _organizeTimeline2.default)(nextProps.timeline.getChildren(nextProps.expand))
+          rows: (0, _organizeTimeline2.default)(nextProps.timeline.getChildren(nextProps.expand, true, !nextProps.expand))
         });
       }
     }
   }, {
     key: 'render',
     value: function render() {
-      var _props = this.props,
-          timeline = _props.timeline,
-          expand = _props.expand;
+      var timeline = this.props.timeline;
       var rows = this.state.rows;
 
 
@@ -18470,8 +18470,43 @@ exports.default = Timeline;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var getTime = function getTime(item) {
+  var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+  var offset = 0;
+  var timeline = item;
+
+  while (timeline.timeline) {
+    timeline = timeline.timeline;
+    offset += timeline.startTime();
+  }
+
+  return offset + (start ? item.startTime() : item.endTime());
+};
+
+var createSegment = function createSegment(segment) {
+  return {
+    item: segment,
+    startTime: getTime(segment),
+    endTime: getTime(segment, false)
+  };
+};
+
+/**
+ * Organize the elements of a timeline into rows, based on how much space each element takes up.
+ * Items are added in the order they appear in the timeline, and they're added to the uppermost
+ * row they can fit in.
+ * @param {Object[]} items - GSAP timeline elements.
+ * @returns {TimelineRow[]} Timeline sorted into rows.
+ */
 
 exports.default = function (items) {
+  /**
+   * Data structure for sorting a timeline's elements into rows.
+   * @typedef {Object} TimelineRow
+   * @prop {Integer} line - Line number of row.
+   * @prop {Object[]} items - GSAP timeline items in row.
+   */
   var rows = [];
   var freeRow = function freeRow(item) {
     for (var i = 0; i < rows.length; i++) {
@@ -18480,10 +18515,10 @@ exports.default = function (items) {
 
       for (var _i = 0; _i < row.items.length; _i++) {
         var segment = row.items[_i];
-        var itemStart = item.startTime();
-        var itemEnd = item.endTime();
-        var segmentStart = segment.startTime();
-        var segmentEnd = segment.endTime();
+        var itemStart = item.startTime;
+        var itemEnd = item.endTime;
+        var segmentStart = segment.startTime;
+        var segmentEnd = segment.endTime;
 
         if (itemStart >= segmentStart && itemStart <= segmentEnd) {
           freeSpace = false;
@@ -18514,14 +18549,16 @@ exports.default = function (items) {
     for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var item = _step.value;
 
+      var segment = createSegment(item);
+
       if (rows.length === 0) {
-        addRow(item);
+        addRow(segment);
       } else {
-        var index = freeRow(item);
+        var index = freeRow(segment);
         if (index > -1) {
-          rows[index].items.push(item);
+          rows[index].items.push(segment);
         } else {
-          addRow(item);
+          addRow(segment);
         }
       }
     }

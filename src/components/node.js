@@ -12,9 +12,9 @@ export default class Node extends Component {
     const start = parseFloat(time);
     const end = parseFloat(total);
     return `${(start / end).toFixed(2) * 100}%`;
-  };
+  }
 
-  static propLookup(item) {
+  static propLookup({item}) {
     const properties = Array.isArray(item._propLookup) ? item._propLookup : [];
 
     if (Array.isArray(item._propLookup)) {
@@ -31,11 +31,11 @@ export default class Node extends Component {
   }
 
   get isInstant() {
-    return this.props.item.duration() === 0;
+    return this.props.item.item.duration() === 0;
   }
 
   get nodeType() {
-    const {item} = this.props;
+    const {item} = this.props.item;
 
     if (item instanceof TimelineLite) {
       return 'timeline';
@@ -59,8 +59,8 @@ export default class Node extends Component {
     const {item, timeline} = this.props;
 
     return {
-      left: getPercentage(item.startTime(), timeline.totalDuration()),
-      right: getPercentage(timeline.totalDuration() - item.endTime(), timeline.totalDuration())
+      left: getPercentage(item.startTime, timeline.totalDuration()),
+      right: getPercentage(timeline.totalDuration() - item.endTime, timeline.totalDuration())
     };
   }
 

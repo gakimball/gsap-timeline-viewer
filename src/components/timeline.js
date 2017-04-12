@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {TimelineLite} from 'gsap';
-import Node from './node';
 import organizeTimeline from '../util/organize-timeline';
+import Node from './node';
 
 export default class Timeline extends Component {
   static propTypes = {
@@ -19,20 +19,20 @@ export default class Timeline extends Component {
     console.log(props.timeline.getChildren(true));
 
     this.state = {
-      rows: organizeTimeline(props.timeline.getChildren(props.expand))
+      rows: organizeTimeline(props.timeline.getChildren(props.expand, true, !props.expand))
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.expand !== this.props.expand) {
       this.setState({
-        rows: organizeTimeline(nextProps.timeline.getChildren(nextProps.expand))
+        rows: organizeTimeline(nextProps.timeline.getChildren(nextProps.expand, true, !nextProps.expand))
       });
     }
   }
 
   render() {
-    const {timeline, expand} = this.props;
+    const {timeline} = this.props;
     const {rows} = this.state;
 
     return (
