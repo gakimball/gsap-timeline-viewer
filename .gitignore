@@ -46,3 +46,5 @@ jspm_packages
 # Build artifacts
 test/bundle.js
 demo/bundle.js
+
+.DS_Store
